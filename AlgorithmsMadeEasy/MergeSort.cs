@@ -1,75 +1,100 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AlgorithmsMadeEasy
 {
-    class MergeSort
+    public class MergeSortAlgo
     {
-        public void MergeSortMethod()
+        //static void Main(string[] args)
+        //{
+        //    Console.WriteLine("Hello World!");
+        //    var program = new Program();
+        //    //var newArray = program.getArray(new int[5] { 0, 1, 2, 3, 4 }, 1, 3);
+        //    //var newArray1 = program.getArray(new int[5] { 0, 1, 2, 3, 4 }, 1, 1);
+        //    // mergedArray = program.Merge(new int[] { 3, 5, 9}, new int[] { 6, 8, 10 });
+
+        //    var mergeSort = program.MergeSort(new int[] { 9, 8, 3 });
+        //    var mergeSort1 = program.MergeSort(new int[] { 9, 8, 3, 1, 2, 6, 7, 4, 11 });
+        //}
+        /// <summary>
+        /// 1 2 3 4 5
+        /// 1 2 3| 4 5
+        /// 1 2|3  |  4 | 5
+        /// 1 | 2  | 3  |  4 | 5
+        /// </summary>
+        /// <param name="array"></param>
+        /// <param name="firstIndex"></param>
+        /// <param name="midIndex"></param>
+        /// <param name="lastIndex"></param>
+        /// <returns></returns>
+
+        public int[] MergeSort(int[] array)
         {
-            var input = System.Console.ReadLine();
-            string[] sInput = input.Split(' ');
-            int[] numbers = Array.ConvertAll(sInput, int.Parse);
-            int len = numbers.Length;
-            MergeSort_Recursive(numbers, 0, len - 1);
-            for (int i = 0; i < len; i++)
+            if (array.Length <= 1)
             {
-                Console.Write(numbers[i] + " ");
+                return array;
             }
 
-            Console.ReadLine();
+            int midIndex = array.Length / 2;
+            var leftArray = getArray(array, 0, midIndex - 1);
+            var rightArray = getArray(array, midIndex, (array.Length - 1));
+
+            var leftSide = MergeSort(leftArray);
+            var rightSide = MergeSort(rightArray);
+
+            return Merge(leftSide, rightSide);
         }
 
-        static public void MergeSort_Recursive(int[] numbers, int left, int right)
+        public int[] Merge(int[] lowHalf, int[] highHalf)
         {
-            int mid;
+            var mergedArray = new int[lowHalf.Length + highHalf.Length];
+            int lowHalfIndex = 0, highHalfIndex = 0, mergedArrayIndex = 0;
 
-            if (right > left)
+            while (lowHalfIndex < lowHalf.Length && highHalfIndex < highHalf.Length)
             {
-                mid = (right + left) / 2;
-                MergeSort_Recursive(numbers, left, mid);
-                MergeSort_Recursive(numbers, (mid + 1), right);
-
-                DoMerge(numbers, left, (mid + 1), right);
-            }
-        }
-
-        static public void DoMerge(int[] numbers, int left, int mid, int right)
-        {
-            int[] temp = new int[numbers.Length];
-            int i, left_end, num_elements, tmp_pos;
-
-            left_end = (mid - 1);
-            tmp_pos = left;
-            num_elements = (right - left + 1);
-
-            while ((left <= left_end) && (mid <= right))
-            {
-                if (numbers[left] <= numbers[mid])
-                    temp[tmp_pos++] = numbers[left++];
+                if (lowHalf[lowHalfIndex] < highHalf[highHalfIndex])
+                {
+                    mergedArray[mergedArrayIndex] = lowHalf[lowHalfIndex];
+                    lowHalfIndex++;
+                }
                 else
-                    temp[tmp_pos++] = numbers[mid++];
+                {
+                    mergedArray[mergedArrayIndex] = highHalf[highHalfIndex];
+                    highHalfIndex++;
+                }
+                mergedArrayIndex++;
             }
 
-            while (left <= left_end)
-                temp[tmp_pos++] = numbers[left++];
-
-            while (mid <= right)
-                temp[tmp_pos++] = numbers[mid++];
-
-            for (i = 0; i < num_elements; i++)
+            while (lowHalfIndex < lowHalf.Length)
             {
-                numbers[right] = temp[right];
-                right--;
+                mergedArray[mergedArrayIndex] = lowHalf[lowHalfIndex];
+                lowHalfIndex++;
+                mergedArrayIndex++;
             }
+
+            while (highHalfIndex < highHalf.Length)
+            {
+                mergedArray[mergedArrayIndex] = highHalf[highHalfIndex];
+                highHalfIndex++;
+                mergedArrayIndex++;
+            }
+
+            return mergedArray;
+        }
+
+
+        private int[] getArray(int[] array, int startIndex, int lastIndex)
+        {
+            if ((lastIndex - startIndex) <= array.Length)
+            {
+                var newArray = new int[lastIndex - startIndex + 1];
+                for (var cnt = 0; cnt <= lastIndex - startIndex; cnt++)
+                {
+                    newArray[cnt] = array[startIndex + cnt];
+                }
+                return newArray;
+            }
+
+            return new int[0];
         }
     }
 }
-
-/*
- * Sample Input
-6 5 3 2 8
-*/
